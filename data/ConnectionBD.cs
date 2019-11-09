@@ -16,7 +16,6 @@ namespace ProgramRecipe
                 Connection = new OleDbConnection();
                 Connection.ConnectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\dave\Documents\dateRecipe.accdb";
                 Connection.Open();
-                Console.Write("Conexión satisfactoria!");
 			}
 			catch (Exception e)
 			{
