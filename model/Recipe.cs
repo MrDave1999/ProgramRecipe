@@ -8,8 +8,8 @@ namespace ProgramRecipe
 
         public string Prescription { get; set; }
 
-        public string DateBegin { get; set; }
+        public DateTime DateBegin { get; set; }
 
-        public string DateDest { get; set; }
+        public DateTime DateDest { get; set; }
     }
 }
