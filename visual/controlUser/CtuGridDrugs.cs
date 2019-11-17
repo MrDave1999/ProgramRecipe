@@ -27,7 +27,7 @@ namespace ProgramRecipe
             if (AdmRecipe.Read())
                 return true;
             foreach (Recipe rp in AdmRecipe.ListRecipe)
-                dgvDrugs.Rows.Add(rp.Drugs, rp.Prescription, rp.DateDest, rp.DateBegin);
+                dgvDrugs.Rows.Add(rp.Drugs, rp.Prescription, rp.DateDest.ToShortDateString(), rp.DateBegin.ToShortDateString());
             if (AdmRecipe.ListRecipe.Count == 0)
             {
                 MessageBox.Show("Error: Ese paciente no tiene receta médica.");
