@@ -17,12 +17,6 @@ namespace ProgramRecipe
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            DateTime dateDest;
-            DateTime dateBegin;
-
-            string sdateDest;
-            string sdateBegin;
-
             if(txtDrug.Text.Length == 0 || ctuDrugs.TxtPrescription.Text.Length == 0)
             {
                 MessageBox.Show("Debes llenar los campos vacíos.");
@@ -35,14 +29,9 @@ namespace ProgramRecipe
                 return;
             }
 
-            dateBegin = DateTime.Now;
-            dateDest = Convert.ToDateTime(ctuDrugs.DtpDateDest.Text);
-            sdateDest = dateDest.ToShortDateString();
-            sdateBegin = dateBegin.ToShortDateString();
-
-            if (AdmRecipe.Save(txtDrug.Text, ctuDrugs.TxtPrescription.Text, sdateDest, sdateBegin))
+            if (AdmRecipe.Save(txtDrug.Text, ctuDrugs.TxtPrescription.Text, ctuDrugs.DtpDateDest.Value))
                 return;
-            ctuGridDrugs.DgvDrugs.Rows.Add(txtDrug.Text, ctuDrugs.TxtPrescription.Text, sdateDest, sdateBegin);
+            ctuGridDrugs.DgvDrugs.Rows.Add(txtDrug.Text, ctuDrugs.TxtPrescription.Text, ctuDrugs.DtpDateDest.Value.ToShortDateString(), DateTime.Now.ToShortDateString());
             ctuGridDrugs.LblDrugs.Text = "Total de Farmacos: " + ctuGridDrugs.DgvDrugs.RowCount;
             txtDrug.Clear();
             ctuDrugs.TxtPrescription.Clear();
