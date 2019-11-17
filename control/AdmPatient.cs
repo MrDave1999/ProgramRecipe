@@ -19,24 +19,31 @@ namespace ProgramRecipe
         {
             OleDbDataReader dr = null;
             bool error = false;
-            string cmd = "SELECT * FROM " + nameTable + " WHERE " + nameCampus + " = '" + data + "'";
+            string cmd = "SELECT * FROM " + nameTable + " WHERE " + nameCampus + " = ?";
             if (ConnectionBD.Open()) 
                 return true;
+            Data.Cmd.Parameters.AddWithValue("?", data);
             if (Data.Read(cmd, ref dr) || dr.Read())
                 error = true;
             if(dr != null)
                 dr.Close();
+            Data.Cmd.Parameters.Clear();
             ConnectionBD.Connection.Close();
             return error;
         }
         
         public static bool Save(string[] txt)
         {
-            string cmd = "INSERT INTO tablePatient(Nombre,Apellido,Cedula,Edad) VALUES('" + txt[0] + "','" + txt[1] + "','" + txt[2] + "','" + txt[3] + "')";
-            return Data.InsertCommand(cmd);
+            bool error;
+            string cmd = "INSERT INTO tablePatient(Nombre,Apellido,Cedula,Edad) VALUES(?,?,?,?)";
+            foreach(string campus in txt)
+                Data.Cmd.Parameters.AddWithValue("?", campus);
+            error = Data.InsertCommand(cmd);
+            Data.Cmd.Parameters.Clear();
+            return error;
         }
 
-        public static bool Read(string typeSearch, string txt)
+        public static bool Read(string typeSearch, string txt, int index)
         {
             SCompare txtEntry = new SCompare(txt);
             OleDbDataReader dr = null;
@@ -45,12 +52,13 @@ namespace ProgramRecipe
             bool error;
             if (ConnectionBD.Open())
                 return true;
-            cmd = "SELECT * FROM tablePatient WHERE " + typeSearch + " = '" + txt + "'";
+            cmd = "SELECT * FROM tablePatient WHERE " + typeSearch + " = ?";
+            Data.Cmd.Parameters.AddWithValue("?", txt);
             if (!(error = Data.Read(cmd, ref dr)))
             {
                 while (dr.Read())
                 {
-                    if (txtEntry == dr[typeSearch].ToString())
+                    if (txtEntry == dr.GetString(index))
                     {
                         pt = new Patient();
                         pt.Name = dr.GetString(1);
@@ -64,6 +72,7 @@ namespace ProgramRecipe
             if(dr != null)
                 dr.Close();
             ConnectionBD.Connection.Close();
+            Data.Cmd.Parameters.Clear();
             return error;
         }
 
@@ -94,3 +103,4 @@ namespace ProgramRecipe
         }
     }
 }
+
