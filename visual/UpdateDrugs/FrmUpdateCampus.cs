@@ -19,16 +19,14 @@ namespace ProgramRecipe
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            DateTime dateDest = Convert.ToDateTime(ctuDrugs.DtpDateDest.Text);
-            string sdateDest = dateDest.ToShortDateString();
             int i = ctuGridDrugs.DgvDrugs.CurrentRow.Index;
-            if (AdmRecipe.Update(ctuDrugs.TxtPrescription.Text, 
-                sdateDest, 
+            if (AdmRecipe.Update(ctuDrugs.TxtPrescription.Text,
+                ctuDrugs.DtpDateDest.Value, 
                 ctuGridDrugs.DgvDrugs.Rows[i].Cells[0].Value.ToString())
                 )
                 return;
             ctuGridDrugs.DgvDrugs.Rows[i].Cells[1].Value = ctuDrugs.TxtPrescription.Text;
-            ctuGridDrugs.DgvDrugs.Rows[i].Cells[2].Value = sdateDest;
+            ctuGridDrugs.DgvDrugs.Rows[i].Cells[2].Value = ctuDrugs.DtpDateDest.Value.ToShortDateString();
             MessageBox.Show("Dato actualizado!");
             Close();
         }
