@@ -18,11 +18,18 @@ namespace ProgramRecipe
 
         public static string CardPatient { get; set; }
 
-        public static bool Save(string drug, string prescrip, string dateDest, string dateBegin)
+        public static bool Save(string drug, string prescrip, DateTime dateDest)
         {
+            bool error;
             string cmd;
-            cmd = "INSERT INTO tableRecipe(Farmaco,Preescripcion,Cedula,FechaInicio,FechaDestino) VALUES('" + drug + "','" + prescrip + "','" + CardPatient + "','" + dateBegin + "','" + dateDest + "')";
-            return Data.InsertCommand(cmd);
+            cmd = "INSERT INTO tableRecipe(Farmaco,Preescripcion,Cedula,FechaInicio,FechaDestino) VALUES(?,?,?,Date(),?)";
+            Data.Cmd.Parameters.AddWithValue("?", drug);
+            Data.Cmd.Parameters.AddWithValue("?", prescrip);
+            Data.Cmd.Parameters.AddWithValue("?", CardPatient);
+            Data.Cmd.Parameters.AddWithValue("?", dateDest.ToString());
+            error = Data.InsertCommand(cmd);
+            Data.Cmd.Parameters.Clear();
+            return error;
         }
 
         public static bool Read()
@@ -34,7 +41,8 @@ namespace ProgramRecipe
             OleDbDataReader dr = null;
             if (ConnectionBD.Open())
                 return true;
-            cmd = "SELECT * FROM tableRecipe WHERE Cedula = '" + CardPatient + "'";
+            cmd = "SELECT * FROM tableRecipe WHERE Cedula = ?";
+            Data.Cmd.Parameters.AddWithValue("?", CardPatient);
             if (!(error = Data.Read(cmd, ref dr)))
             {
                 while (dr.Read())
@@ -44,8 +52,8 @@ namespace ProgramRecipe
                         rp = new Recipe();
                         rp.Drugs = dr.GetString(1);
                         rp.Prescription = dr.GetString(2);
-                        rp.DateBegin = dr.GetString(4);
-                        rp.DateDest = dr.GetString(5);
+                        rp.DateBegin = dr.GetDateTime(4);
+                        rp.DateDest = dr.GetDateTime(5);
                         ListRecipe.Add(rp);
                     }
                 }
@@ -53,20 +61,33 @@ namespace ProgramRecipe
             if(dr != null)
                 dr.Close();
             ConnectionBD.Connection.Close();
+            Data.Cmd.Parameters.Clear();
             return error;
         }
 
         public static bool Delete(string drug)
         {
-            string cmd = "DELETE FROM tableRecipe WHERE Cedula = '" + CardPatient + "' and Farmaco = '" + drug + "'";
-            return Data.InsertCommand(cmd);
+            bool error;
+            string cmd = "DELETE FROM tableRecipe WHERE Cedula = ? and Farmaco = ?";
+            Data.Cmd.Parameters.AddWithValue("?", CardPatient);
+            Data.Cmd.Parameters.AddWithValue("?", drug);
+            error = Data.InsertCommand(cmd);
+            Data.Cmd.Parameters.Clear();
+            return error;
         }
 
-        public static bool Update(string prescrip, string dateDest, string drugSelect)
+        public static bool Update(string prescrip, DateTime dateDest, string drugSelect)
         {
             string cmd;
-            cmd = "UPDATE tableRecipe SET Preescripcion = '" + prescrip + "',FechaDestino = '" + dateDest + "' WHERE Cedula = '" + CardPatient + "' and Farmaco = '" + drugSelect + "'";
-            return Data.InsertCommand(cmd);
+            bool error;
+            cmd = "UPDATE tableRecipe SET Preescripcion = ?, FechaDestino = ? WHERE Cedula = ? and Farmaco = ?";
+            Data.Cmd.Parameters.AddWithValue("?", prescrip);
+            Data.Cmd.Parameters.AddWithValue("?", dateDest.ToString());
+            Data.Cmd.Parameters.AddWithValue("?", CardPatient);
+            Data.Cmd.Parameters.AddWithValue("?", drugSelect);
+            error = Data.InsertCommand(cmd);
+            Data.Cmd.Parameters.Clear();
+            return error;
         }
     }
 }
