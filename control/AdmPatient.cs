@@ -99,7 +99,7 @@ namespace ProgramRecipe
             if (dr != null)
                 dr.Close();
             ConnectionBD.Connection.Close();
-            return false;
+            return error;
         }
     }
 }
